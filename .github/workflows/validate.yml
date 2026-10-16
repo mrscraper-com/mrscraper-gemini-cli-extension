@@ -52,9 +52,9 @@ jobs:
       - name: Install extension and confirm what it loads
         run: |
           printf 'y\n' | gemini extensions install . --consent --skip-settings
-          gemini extensions list | tee "$RUNNER_TEMP/list.txt"
+          gemini extensions list 2>&1 | tee "$RUNNER_TEMP/list.txt"
           for expected in "mrscraper (" "GEMINI.md" "mrscraper-fetch:" "mrscraper-serp:" "mrscraper:"; do
             grep -qF "$expected" "$RUNNER_TEMP/list.txt" || { echo "::error::missing $expected"; exit 1; }
           done
-          gemini mcp list | tee "$RUNNER_TEMP/mcp.txt"
+          gemini mcp list 2>&1 | tee "$RUNNER_TEMP/mcp.txt"
           grep -qF "https://mcp.mrscraper.com/mcp (http)" "$RUNNER_TEMP/mcp.txt"
