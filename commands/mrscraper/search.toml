@@ -4,5 +4,5 @@ Use the mrscraper-serp skill. Search Google with the MrScraper `webSearch` tool,
 
 Query: {{args}}
 
-List the organic results from `data.data.organic` with position, title, link, and snippet. Do not fetch result pages unless the user asks; offer `/mrscraper:fetch` for a result they want to read.
+List the organic results from `data.data.organic` with rank, title, link, and description. Do not fetch result pages unless the user asks; offer `/mrscraper:fetch` for a result they want to read.
 """
