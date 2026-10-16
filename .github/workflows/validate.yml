@@ -1,0 +1,60 @@
+name: Validate Gemini CLI extension
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  GEMINI_CLI_VERSION: 0.63.0
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Gemini CLI
+        run: |
+          npm install --global "@google/gemini-cli@${GEMINI_CLI_VERSION}"
+          echo "HOME=$RUNNER_TEMP/gemini-home" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/gemini-home"
+
+      - name: Check manifest and commands
+        run: |
+          python3 - <<'PY'
+          import glob, json, tomllib
+
+          manifest = json.load(open("gemini-extension.json", encoding="utf-8"))
+          assert manifest["name"] == "mrscraper", manifest["name"]
+          server = manifest["mcpServers"]["mrscraper"]
+          assert server["httpUrl"] == "https://mcp.mrscraper.com/mcp", server
+          assert "headers" not in server, "the extension must not ship credentials"
+          for path in sorted(glob.glob("commands/**/*.toml", recursive=True)):
+              command = tomllib.load(open(path, "rb"))
+              assert command.get("description") and command.get("prompt"), path
+              print("ok", path)
+          PY
+
+      - name: Validate extension
+        run: gemini extensions validate .
+
+      - name: Install extension and confirm what it loads
+        run: |
+          printf 'y\n' | gemini extensions install . --consent --skip-settings
+          gemini extensions list | tee "$RUNNER_TEMP/list.txt"
+          for expected in "mrscraper (" "GEMINI.md" "mrscraper-fetch:" "mrscraper-serp:" "mrscraper:"; do
+            grep -qF "$expected" "$RUNNER_TEMP/list.txt" || { echo "::error::missing $expected"; exit 1; }
+          done
+          gemini mcp list | tee "$RUNNER_TEMP/mcp.txt"
+          grep -qF "https://mcp.mrscraper.com/mcp (http)" "$RUNNER_TEMP/mcp.txt"

@@ -1,0 +1,4 @@
+description = "Show MrScraper subscription status, token usage, and remaining tokens."
+prompt = """
+Call the MrScraper `status` tool and report the subscription status, token usage, token limit, remaining tokens, usage percentage, and renewal date. If the tool reports an authentication error, tell the user to run `/mcp auth mrscraper`.
+"""

@@ -1,0 +1,12 @@
+{
+  "name": "mrscraper",
+  "version": "0.1.0",
+  "description": "Retrieve web pages as HTML, Markdown, or screenshots, search Google, and check MrScraper account usage through the hosted MrScraper MCP server.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "mrscraper": {
+      "httpUrl": "https://mcp.mrscraper.com/mcp",
+      "timeout": 600000
+    }
+  }
+}
