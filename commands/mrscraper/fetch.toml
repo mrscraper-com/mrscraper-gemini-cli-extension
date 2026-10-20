@@ -1,0 +1,8 @@
+description = "Retrieve a web page with MrScraper scraperAPI and answer from the raw content."
+prompt = """
+Use the mrscraper-fetch skill. Retrieve the page with the MrScraper `scraperAPI` tool and treat the raw response as the source of truth.
+
+Request: {{args}}
+
+If the request has no absolute http or https URL, ask for one before calling any tool. Request Markdown in addition to HTML when the user wants a summary or quotes. Report the tool's `status_code`, the target page status from `headers.x-status-code`, and `token_usage`, then answer the request from the retrieved content.
+"""
